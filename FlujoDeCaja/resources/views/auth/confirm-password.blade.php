@@ -10,8 +10,19 @@
             {{ __('Esta es un área segura de la aplicación. Por favor confirma tu contraseña antes de continuar.') }}
         </div>
 
-        <!-- Validación -->
-        <x-validation-errors class="mb-4" />
+        @if ($errors->any())
+    <div class="mb-4">
+        <div class="font-medium text-red-600">
+            {{ __('Whoops! Algo salió mal.') }}
+        </div>
+
+        <ul class="mt-3 list-disc list-inside text-sm text-red-600">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
         <form method="POST" action="{{ route('password.confirm') }}">
             @csrf

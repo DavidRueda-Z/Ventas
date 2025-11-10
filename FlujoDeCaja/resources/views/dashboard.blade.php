@@ -18,14 +18,14 @@
                     <div class="p-6 bg-blue-50 rounded-lg shadow hover:shadow-md transition">
                         <h2 class="text-xl font-semibold text-blue-700 mb-2">📦 Productos</h2>
                         <p class="text-gray-600 mb-4">Gestiona el inventario de tus productos.</p>
-                        <a href="{{ route('productos.index') }}" class="text-blue-600 hover:text-blue-800 font-medium">Ver productos →</a>
+                        <a href="{{ route('products.index') }}" class="text-blue-600 hover:text-blue-800 font-medium">Ver productos →</a>
                     </div>
 
                     <!-- Tarjeta: Ventas -->
                     <div class="p-6 bg-green-50 rounded-lg shadow hover:shadow-md transition">
                         <h2 class="text-xl font-semibold text-green-700 mb-2">💵 Ventas</h2>
                         <p class="text-gray-600 mb-4">Registra y visualiza todas las ventas realizadas.</p>
-                        <a href="{{ route('ventas.index') }}" class="text-green-600 hover:text-green-800 font-medium">Ver ventas →</a>
+                        <a href="{{ route('sales.index') }}" class="text-green-600 hover:text-green-800 font-medium">Ver ventas →</a>
                     </div>
 
                     <!-- Tarjeta: Perfil -->
