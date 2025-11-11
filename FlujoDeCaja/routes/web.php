@@ -1,79 +1,97 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\RoleController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\VendedorController;
 
-
-//Rutas públicas
-
+/*
+|--------------------------------------------------------------------------
+| RUTAS PÚBLICAS
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
     return view('welcome');
 });
 
+/*
+|--------------------------------------------------------------------------
+| RUTAS DE AUTENTICACIÓN
+|--------------------------------------------------------------------------
+*/
+require __DIR__ . '/auth.php';
 
-//Rutas protegidas (requieren login)
-
+/*
+|--------------------------------------------------------------------------
+| RUTAS PROTEGIDAS (solo para usuarios autenticados)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->group(function () {
 
-    
-//Rutas del panel de usuario (vendedores)
-    
-    
-    Route::resource('sales', SaleController::class);
+    /*
+    |--------------------------------------------------------------------------
+    | PANEL DE ADMINISTRADOR (solo rol: admin)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:admin'])
+        ->prefix('admin')
+        ->name('admin.')
+        ->group(function () {
+            // Gestión de productos (solo admin)
+            Route::get('/products', [AdminController::class, 'productsIndex'])->name('products.index');
+            Route::get('/products/create', [AdminController::class, 'createProduct'])->name('products.create');
+            Route::post('/products', [AdminController::class, 'storeProduct'])->name('products.store');
+            Route::get('/products/{product}/edit', [AdminController::class, 'editProduct'])->name('products.edit');
+            Route::put('/products/{product}', [AdminController::class, 'updateProduct'])->name('products.update');
 
-    // Productos visibles solo si el usuario tiene permiso (ej. vendedor)
-    Route::resource('products', ProductController::class)->middleware('role:vendedor|admin');
+            // Gestión de usuarios y roles
+            Route::post('/users/{user}/promote', [AdminController::class, 'promoteToAdmin'])->name('users.promote');
+            Route::post('/users/{user}/assign-vendedor', [AdminController::class, 'assignVendedor'])->name('users.assign-vendedor');
 
-    
-    //Rutas del panel de administración (solo admin)
-    
-    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
+            // Administración de roles
+            Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+            Route::post('/roles/assign/{userId}', [RoleController::class, 'assignRole'])->name('roles.assign');
+        });
 
-        // Gestión de productos
-        Route::get('products', [AdminController::class, 'productsIndex'])->name('products.index');
-        Route::get('products/create', [AdminController::class, 'createProduct'])->name('products.create');
-        Route::post('products', [AdminController::class, 'storeProduct'])->name('products.store');
-        Route::get('products/{product}/edit', [AdminController::class, 'editProduct'])->name('products.edit');
-        Route::put('products/{product}', [AdminController::class, 'updateProduct'])->name('products.update');
+    /*
+    |--------------------------------------------------------------------------
+    | PANEL DE VENDEDOR (solo rol: vendedor)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:vendedor'])
+        ->prefix('vendedor')
+        ->name('vendedor.')
+        ->group(function () {
+            Route::get('/', [VendedorController::class, 'index'])->name('index');
+            Route::get('/crear', [VendedorController::class, 'create'])->name('create');
+            Route::post('/', [VendedorController::class, 'store'])->name('store');
+            Route::get('/{id}', [VendedorController::class, 'show'])->name('show');
+        });
 
-        // Gestión de usuarios y roles
-        Route::post('users/{user}/promote', [AdminController::class, 'promoteToAdmin'])->name('users.promote');
-        Route::post('users/{user}/assign-vendedor', [AdminController::class, 'assignVendedor'])->name('users.assign-vendedor');
-
-        // Gestión de roles
-        Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
-        Route::post('/roles/assign/{userId}', [RoleController::class, 'assignRole'])->name('roles.assign');
+    /*
+    |--------------------------------------------------------------------------
+    | RUTAS COMPARTIDAS (Admin y Vendedor)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:admin|vendedor'])->group(function () {
+        Route::resource('sales', SaleController::class);
     });
 
-
-
-    
-    //Perfil de usuario
-    
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    
-    //Dashboard general
-    
+    /*
+    |--------------------------------------------------------------------------
+    | PERFIL Y DASHBOARD
+    |--------------------------------------------------------------------------
+    */
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->middleware(['verified'])->name('dashboard');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 
-//Rutas de autenticación (login, register, logout)
-
-require __DIR__.'/auth.php';
-
-Route::middleware(['auth', 'role:vendedor'])->group(function () {
-    Route::get('/vendedor', [VendedorController::class, 'index'])->name('vendedor.index');
-    Route::get('/vendedor/crear', [VendedorController::class, 'create'])->name('vendedor.create');
-    Route::post('/vendedor', [VendedorController::class, 'store'])->name('vendedor.store');
-    Route::get('/vendedor/{id}', [VendedorController::class, 'show'])->name('vendedor.show');
-});

@@ -14,7 +14,8 @@ class SaleController extends Controller
     public function index()
     {
         $sales = Sale::with('user')->latest()->get();
-        return view('sales.index', compact('sales'));
+        return view('vendedor.sales.index', compact('sales'));
+
     }
 
     public function create()

@@ -10,7 +10,7 @@
 
     <a href="{{ route('vendedor.create') }}" class="btn btn-primary mb-3">Registrar Nueva Venta</a>
 
-    @if($ventas->isEmpty())
+    @if($sales->isEmpty())
         <p>No tienes ventas registradas aún.</p>
     @else
         <table class="table table-bordered">
@@ -25,15 +25,15 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($ventas as $venta)
+                @foreach($sale as $sale)
                     <tr>
-                        <td>{{ $venta->id }}</td>
-                        <td>{{ $venta->product->name ?? 'Producto eliminado' }}</td>
-                        <td>{{ $venta->quantity }}</td>
-                        <td>${{ number_format($venta->total, 0, ',', '.') }}</td>
-                        <td>{{ $venta->created_at->format('d/m/Y H:i') }}</td>
+                        <td>{{ $sale->id }}</td>
+                        <td>{{ $sale->product->name ?? 'Producto eliminado' }}</td>
+                        <td>{{ $sale->quantity }}</td>
+                        <td>${{ number_format($sale->total, 0, ',', '.') }}</td>
+                        <td>{{ $sale->created_at->format('d/m/Y H:i') }}</td>
                         <td>
-                            <a href="{{ route('vendedor.show', $venta->id) }}" class="btn btn-info btn-sm">Ver</a>
+                            <a href="{{ route('vendedor.show', $sale->id) }}" class="btn btn-info btn-sm">Ver</a>
                         </td>
                     </tr>
                 @endforeach

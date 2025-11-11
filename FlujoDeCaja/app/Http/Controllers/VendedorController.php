@@ -14,8 +14,8 @@ class VendedorController extends Controller
      */
     public function index()
     {
-        $ventas = Sale::where('user_id', Auth::id())->get();
-        return view('vendedor.sales.index', compact('ventas'));
+        $sale = Sale::where('user_id', Auth::id())->get();
+        return view('vendedor.sales.index', compact('sales'));
     }
 
     /**
@@ -23,8 +23,8 @@ class VendedorController extends Controller
      */
     public function create()
     {
-        $productos = Product::all();
-        return view('vendedor.sales.create', compact('productos'));
+        $products = Product::all();
+        return view('vendedor.sales.create', compact('products'));
     }
 
     /**
@@ -37,8 +37,8 @@ class VendedorController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $producto = Product::find($request->product_id);
-        $total = $producto->price * $request->quantity;
+        $product = Product::find($request->product_id);
+        $total = $product->price * $request->quantity;
 
         Sale::create([
             'user_id' => Auth::id(),

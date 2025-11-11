@@ -11,8 +11,8 @@
             <label for="product_id" class="form-label">Producto</label>
             <select name="product_id" id="product_id" class="form-select" required>
                 <option value="">-- Selecciona un producto --</option>
-                @foreach($productos as $producto)
-                    <option value="{{ $producto->id }}">{{ $producto->name }} - ${{ number_format($producto->price, 0, ',', '.') }}</option>
+                @foreach($products as $product)
+                    <option value="{{ $product->id }}">{{ $product->name }} - ${{ number_format($product->price, 0, ',', '.') }}</option>
                 @endforeach
             </select>
         </div>

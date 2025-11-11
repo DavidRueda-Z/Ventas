@@ -18,7 +18,7 @@
                     <div class="p-6 bg-blue-50 rounded-lg shadow hover:shadow-md transition">
                         <h2 class="text-xl font-semibold text-blue-700 mb-2">📦 Productos</h2>
                         <p class="text-gray-600 mb-4">Gestiona el inventario de tus productos.</p>
-                        <a href="{{ route('products.index') }}" class="text-blue-600 hover:text-blue-800 font-medium">Ver productos →</a>
+                        <a href="{{ Auth::user()->hasRole('admin') ? route('admin.products.index') : route('products.index') }}" class="text-blue-600 hover:text-blue-800 font-medium">Ver productos →</a>
                     </div>
 
                     <!-- Tarjeta: Ventas -->
